@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SD CLOUD - High-Speed V2Ray Servers</title>
+  <meta name="description" content="Enterprise-grade V2Ray tunnels. Free, fast, and secure." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #050a14;
+      --bg2:       #080f1e;
+      --card:      #0b1425;
+      --card2:     #0e1930;
+      --border:    #1a2740;
+      --accent:    #00c8ff;
+      --accent2:   #0099cc;
+      --accent3:   #00ff9d;
+      --text:      #e8f0fe;
+      --muted:     #7a8fb0;
+      --success:   #00ff9d;
+      --warning:   #ffb800;
+      --grad1: linear-gradient(135deg, #00c8ff22, #00ff9d11);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── ANIMATED BG ─── */
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(0,200,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+    .bg-glow {
+      position: fixed; z-index: 0; pointer-events: none;
+      border-radius: 50%; filter: blur(90px); opacity: .18;
+    }
+    .bg-glow.g1 { width: 600px; height: 600px; background: #00c8ff; top: -150px; left: -150px; }
+    .bg-glow.g2 { width: 500px; height: 500px; background: #00ff9d; bottom: -100px; right: -100px; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 64px;
+      background: rgba(5,10,20,.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 1.25rem; letter-spacing: -.5px;
+      color: var(--text); text-decoration: none;
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; font-weight: 700; color: #050a14;
+    }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: .9rem; font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-actions { display: flex; gap: 10px; align-items: center; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px;
+      border-radius: 8px; font-size: .875rem; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: all .2s; border: none; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #050a14; }
+    .btn-primary:hover { opacity: .85; transform: translateY(-1px); }
+    .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+    .btn-outline:hover { background: var(--accent); color: #050a14; }
+    .btn-green { background: linear-gradient(135deg, var(--accent3), #00cc7a); color: #050a14; }
+    .btn-green:hover { opacity: .85; transform: translateY(-1px); }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative; z-index: 1;
+      padding: 100px 40px 80px;
+      text-align: center;
+      max-width: 900px; margin: 0 auto;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px; border-radius: 20px;
+      border: 1px solid rgba(0,200,255,.25);
+      background: rgba(0,200,255,.06);
+      font-size: .78rem; font-weight: 600; color: var(--accent);
+      letter-spacing: .04em; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3);
+      animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 800; line-height: 1.1; letter-spacing: -.03em;
+      margin-bottom: 20px;
+    }
+    h1 .accent { color: var(--accent); }
+    h1 .accent2 { color: var(--accent3); }
+
+    .hero-sub {
+      font-size: 1.05rem; color: var(--muted); max-width: 560px; margin: 0 auto 36px;
+    }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; }
+
+    /* stats strip */
+    .stats-strip {
+      display: flex; gap: 0; justify-content: center;
+      border: 1px solid var(--border); border-radius: 16px;
+      overflow: hidden; background: var(--card);
+    }
+    .stat-item {
+      flex: 1; padding: 20px 28px; text-align: center;
+      border-right: 1px solid var(--border);
+      min-width: 120px;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-size: 1.7rem; font-weight: 800; color: var(--text); letter-spacing: -.02em; }
+    .stat-num span { color: var(--accent); }
+    .stat-label { font-size: .78rem; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: .04em; }
+
+    /* ─── SECTION ─── */
+    section { position: relative; z-index: 1; }
+    .section-inner { max-width: 1100px; margin: 0 auto; padding: 80px 40px; }
+    .section-tag {
+      font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 10px;
+    }
+    h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; letter-spacing: -.02em;
+      margin-bottom: 12px; }
+    .section-sub { color: var(--muted); max-width: 520px; margin-bottom: 48px; font-size: .95rem; }
+
+    /* ─── LIVE STATS ─── */
+    .live-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px;
+      margin-bottom: 40px;
+    }
+    .live-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 20px; text-align: center;
+      transition: border-color .2s, transform .2s;
+    }
+    .live-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .live-card .num {
+      font-size: 2rem; font-weight: 800; color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .live-card .lbl { font-size: .78rem; color: var(--muted); margin-top: 4px; }
+    .live-indicator {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .75rem; color: var(--accent3); margin-top: 6px;
+    }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3);
+      animation: pulse 1.5s infinite; }
+
+    /* ─── PROTOCOLS ─── */
+    .proto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 20px; }
+    .proto-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 28px; position: relative; overflow: hidden;
+      transition: border-color .25s, transform .25s;
+    }
+    .proto-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .proto-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--grad1); opacity: 0; transition: opacity .25s;
+    }
+    .proto-card:hover::before { opacity: 1; }
+    .proto-num {
+      font-size: .72rem; font-weight: 700; letter-spacing: .1em; color: var(--accent);
+      margin-bottom: 14px; font-family: 'JetBrains Mono', monospace;
+    }
+    .proto-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; }
+    .proto-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .proto-badge {
+      font-size: .7rem; padding: 3px 10px; border-radius: 20px; font-weight: 600;
+      background: rgba(0,200,255,.1); border: 1px solid rgba(0,200,255,.2); color: var(--accent);
+    }
+    .proto-badge.green {
+      background: rgba(0,255,157,.1); border-color: rgba(0,255,157,.2); color: var(--accent3);
+    }
+    .proto-desc { font-size: .88rem; color: var(--muted); margin-bottom: 16px; }
+    .proto-features { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .proto-features li { font-size: .85rem; color: var(--muted);
+      display: flex; align-items: center; gap: 8px; }
+    .proto-features li::before { content: '✓'; color: var(--accent3); font-weight: 700; }
+
+    /* ─── SERVERS ─── */
+    .server-section { background: rgba(8,15,30,.6); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .server-tabs { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden; width: fit-content; margin-bottom: 28px; }
+    .tab-btn {
+      padding: 9px 22px; font-size: .875rem; font-weight: 600;
+      background: transparent; border: none; color: var(--muted); cursor: pointer;
+      transition: all .2s;
+    }
+    .tab-btn.active { background: var(--accent); color: #050a14; }
+    .server-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 14px; }
+    .server-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 18px 20px; display: flex; align-items: center; gap: 14px;
+      transition: border-color .2s, transform .2s; cursor: pointer;
+    }
+    .server-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .flag { font-size: 1.6rem; line-height: 1; }
+    .server-info { flex: 1; }
+    .server-name { font-weight: 600; font-size: .9rem; }
+    .server-nodes { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+    .server-status {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--accent3);
+      animation: pulse 2s infinite;
+    }
+
+    /* ─── HOW TO ─── */
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 0; }
+    .step {
+      padding: 32px 28px; border: 1px solid var(--border); margin: -1px 0 0 -1px;
+      position: relative;
+    }
+    .step:first-child { border-radius: 16px 0 0 0; }
+    .step:nth-child(2) { border-radius: 0; }
+    .step:nth-child(3) { border-radius: 0; }
+    .step:last-child { border-radius: 0 0 16px 0; }
+    .step-num {
+      font-size: 2.5rem; font-weight: 800; color: rgba(0,200,255,.12);
+      font-family: 'JetBrains Mono', monospace; line-height: 1; margin-bottom: 14px;
+    }
+    .step h4 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .step p { font-size: .85rem; color: var(--muted); }
+
+    /* ─── NOTICE ─── */
+    .notice-box {
+      background: var(--card); border: 1px solid rgba(255,184,0,.25); border-radius: 16px;
+      padding: 32px; max-width: 800px; margin: 0 auto;
+    }
+    .notice-box h3 { color: var(--warning); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .notice-item { margin-bottom: 18px; }
+    .notice-item h4 { font-size: .92rem; font-weight: 700; margin-bottom: 5px; color: var(--text); }
+    .notice-item p { font-size: .85rem; color: var(--muted); line-height: 1.7; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 40px 40px 28px;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .footer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; flex-wrap: wrap; margin-bottom: 32px; }
+    .footer-brand p { font-size: .85rem; color: var(--muted); margin-top: 8px; max-width: 280px; }
+    .footer-links h5 { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .footer-links a { font-size: .875rem; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+      padding-top: 20px; border-top: 1px solid var(--border); }
+    .footer-bottom p { font-size: .8rem; color: var(--muted); }
+    .social-links { display: flex; gap: 10px; }
+    .social-link {
+      width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); text-decoration: none; font-size: .85rem;
+      transition: all .2s;
+    }
+    .social-link:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 768px) {
+      nav { padding: 0 18px; }
+      .nav-links { display: none; }
+      .hero { padding: 60px 20px 50px; }
+      .section-inner { padding: 50px 20px; }
+      .stats-strip { flex-wrap: wrap; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--border); flex: 0 0 50%; }
+      .stat-item:nth-child(2n) { border-right: none; }
+      .steps-grid { grid-template-columns: 1fr 1fr; }
+      footer { padding: 30px 20px; }
+    }
+    @media (max-width: 480px) {
+      .steps-grid { grid-template-columns: 1fr; }
+      .step { border-radius: 0 !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow g1"></div>
+<div class="bg-glow g2"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-icon">SD</div>
+    SD CLOUD
+  </a>
+  <ul class="nav-links">
+    <li><a href="#freevpn">Public FREE VPN</a></li>
+    <li><a href="#privatevpn">Private VPN</a></li>
+    <li><a href="#howtouse">How to Use</a></li>
+    <li><a href="#notice">Notice</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="#" class="btn btn-ghost">Sign In</a>
+    <a href="#freevpn" class="btn btn-primary">Get Free VPN</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">
+    <span class="badge-dot"></span>
+    Infrastructure Active — All Systems Operational
+  </div>
+  <h1>The best tools to<br><span class="accent">manage your</span> <span class="accent2">internet</span></h1>
+  <p class="hero-sub">Enterprise-grade V2Ray tunnels. We help you manage your connection safely and efficiently — zero logs, no registration required.</p>
+  <div class="hero-btns">
+    <a href="#freevpn" class="btn btn-primary" style="font-size:1rem;padding:13px 28px;">⚡ Public FREE VPN</a>
+    <a href="#privatevpn" class="btn btn-outline" style="font-size:1rem;padding:13px 28px;">🔒 Private VPN</a>
+  </div>
+
+  <div class="stats-strip">
+    <div class="stat-item">
+      <div class="stat-num">175<span>+</span></div>
+      <div class="stat-label">Active Servers</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">20M<span>+</span></div>
+      <div class="stat-label">Daily Connections</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">99.9<span>%</span></div>
+      <div class="stat-label">Uptime Reach</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Logs Kept</div>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE STATS -->
+<section>
+  <div class="section-inner">
+    <div class="section-tag">Real-Time Infrastructure</div>
+    <h2>Active SD CLOUD Statistics</h2>
+    <p class="section-sub">Live metrics updated every minute from our global infrastructure.</p>
+    <div class="live-grid">
+      <div class="live-card">
+        <div class="num" id="counter-users">8,241</div>
+        <div class="lbl">Total Users</div>
+        <div class="live-indicator"><span class="live-dot"></span>Live</div>
+      </div>
+      <div class="live-card">
+        <div class="num">280<span style="font-size:1.2rem;color:var(--muted)">+</span></div>
+        <div class="lbl">Public VPNs</div>
+        <div class="live-indicator"><span class="live-dot"></span>Live</div>
+      </div>
+      <div class="live-card">
+        <div class="num">524<span style="font-size:1.2rem;color:var(--muted)">+</span></div>
+        <div class="lbl">Private VPNs</div>
+        <div class="live-indicator"><span class="live-dot"></span>Live</div>
+      </div>
+      <div class="live-card">
+        <div class="num">8<span style="font-size:1.2rem;color:var(--muted)">+</span></div>
+        <div class="lbl">Public Servers</div>
+        <div class="live-indicator"><span class="live-dot"></span>Live</div>
+      </div>
+      <div class="live-card">
+        <div class="num">6<span style="font-size:1.2rem;color:var(--muted)">+</span></div>
+        <div class="lbl">Private Servers</div>
+        <div class="live-indicator"><span class="live-dot"></span>Live</div>
+      </div>
+      <div class="live-card">
+        <div class="num">9,102<span style="font-size:1.2rem;color:var(--muted)">+</span></div>
+        <div class="lbl">Total Visitors</div>
+        <div class="live-indicator"><span class="live-dot"></span>Live</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROTOCOLS -->
+<section style="background: rgba(8,15,30,.5); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="section-inner">
+    <div class="section-tag">Enterprise-grade Infrastructure</div>
+    <h2>Next-Gen Proxy Protocols</h2>
+    <p class="section-sub">We use next-generation proxy protocols designed to bypass DPI and firewalls with zero overhead.</p>
+    <div class="proto-grid">
+      <div class="proto-card">
+        <div class="proto-num">Protocol 01</div>
+        <h3>VLESS + WebSocket</h3>
+        <div class="proto-badges">
+          <span class="proto-badge">TLS 1.3</span>
+          <span class="proto-badge">WS Transport</span>
+          <span class="proto-badge green">Recommended</span>
+        </div>
+        <p class="proto-desc">Stateless, ultra-lightweight protocol built for extreme speeds. Paired with WebSocket over TLS 1.3, it mimics standard HTTPS traffic to bypass firewalls effortlessly.</p>
+        <ul class="proto-features">
+          <li>Fastest Speed — Near zero overhead</li>
+          <li>No Encryption Overhead — TLS handles security</li>
+          <li>DPI Bypasser — Looks like normal HTTPS</li>
+        </ul>
+      </div>
+      <div class="proto-card">
+        <div class="proto-num">Protocol 02</div>
+        <h3>Trojan TLS</h3>
+        <div class="proto-badges">
+          <span class="proto-badge">TLS 1.3</span>
+          <span class="proto-badge">TCP Transport</span>
+          <span class="proto-badge green">Anti-Censorship</span>
+        </div>
+        <p class="proto-desc">Engineered to defeat censorship. It mimics a standard web server to make your traffic completely indistinguishable from real web browsing.</p>
+        <ul class="proto-features">
+          <li>HTTPS Camouflage — Perfectly disguised</li>
+          <li>TLS Only — No plaintext leaks ever</li>
+          <li>Low Latency TCP — Direct tunnel connection</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FREE SERVERS -->
+<section id="freevpn">
+  <div class="section-inner">
+    <div class="section-tag">Public Access</div>
+    <h2>Public Free Servers</h2>
+    <p class="section-sub">Access high-speed free nodes across the globe. No registration required.</p>
+    <div class="server-tabs">
+      <button class="tab-btn active">Free</button>
+      <button class="tab-btn">Premium</button>
+    </div>
+    <div class="server-grid" id="free-servers">
+      <div class="server-card">
+        <div class="flag">🇮🇳</div>
+        <div class="server-info">
+          <div class="server-name">India</div>
+          <div class="server-nodes">15 Nodes Available</div>
+        </div>
+        <div class="server-status"></div>
+      </div>
+      <div class="server-card">
+        <div class="flag">🇺🇸</div>
+        <div class="server-info">
+          <div class="server-name">United States</div>
+          <div class="server-nodes">15 Nodes Available</div>
+        </div>
+        <div class="server-status"></div>
+      </div>
+      <div class="server-card">
+        <div class="flag">🇸🇬</div>
+        <div class="server-info">
+          <div class="server-name">Singapore</div>
+          <div class="server-nodes">10 Nodes Available</div>
+        </div>
+        <div class="server-status"></div>
+      </div>
+      <div class="server-card">
+        <div class="flag">🇬🇧</div>
+        <div class="server-info">
+          <div class="server-name">United Kingdom</div>
+          <div class="server-nodes">8 Nodes Available</div>
+        </div>
+        <div class="server-status"></div>
+      </div>
+      <div class="server-card">
+        <div class="flag">🇩🇪</div>
+        <div class="server-info">
+          <div class="server-name">Germany</div>
+          <div class="server-nodes">12 Nodes Available</div>
+        </div>
+        <div class="server-status"></div>
+      </div>
+      <div class="server-card">
+        <div class="flag">🇯🇵</div>
+        <div class="server-info">
+          <div class="server-name">Japan</div>
+          <div class="server-nodes">9 Nodes Available</div>
+        </div>
+        <div class="server-status"></div>
+      </div>
+    </div>
+    <div style="margin-top:28px; text-align:center;">
+      <a href="#" class="btn btn-green" style="font-size:.95rem;padding:12px 28px;">View All Public Servers →</a>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVATE SERVERS -->
+<section id="privatevpn" class="server-section">
+  <div class="section-inner">
+    <div class="section-tag">Premium Access</div>
+    <h2>Premium Private Servers</h2>
+    <p class="section-sub">Exclusive dedicated tunnels for VIP users. Maximum performance and privacy.</p>
+    <div class="server-grid">
+      <div class="server-card">
+        <div class="flag">🇦🇺</div>
+        <div class="server-info">
+          <div class="server-name">Australia P-A</div>
+          <div class="server-nodes">1 Dedicated Server</div>
+        </div>
+        <div class="server-status"></div>
+      </div>
+      <div class="server-card">
+        <div class="flag">🇺🇸</div>
+        <div class="server-info">
+          <div class="server-name">United States P-A</div>
+          <div class="server-nodes">1 Dedicated Server</div>
+        </div>
+        <div class="server-status"></div>
+      </div>
+      <div class="server-card">
+        <div class="flag">🇸🇬</div>
+        <div class="server-info">
+          <div class="server-name">Singapore P-A</div>
+          <div class="server-nodes">1 Dedicated Server</div>
+        </div>
+        <div class="server-status"></div>
+      </div>
+      <div class="server-card">
+        <div class="flag">🇯🇵</div>
+        <div class="server-info">
+          <div class="server-name">Japan P-A</div>
+          <div class="server-nodes">1 Dedicated Server</div>
+        </div>
+        <div class="server-status"></div>
+      </div>
+    </div>
+    <div style="margin-top:28px; text-align:center;">
+      <a href="#" class="btn btn-primary" style="font-size:.95rem;padding:12px 28px;">🔒 Create Private VPN →</a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO USE -->
+<section id="howtouse">
+  <div class="section-inner">
+    <div class="section-tag">Quick Setup</div>
+    <h2>Get Started in Minutes</h2>
+    <p class="section-sub">Connect to SD CLOUD in four simple steps — no technical knowledge required.</p>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>Pick Location</h4>
+        <p>Select a country from our global server map based on your preferred region.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>Choose Server</h4>
+        <p>Pick a secure virtual node from our available free or private server pool.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>Select Protocol</h4>
+        <p>Choose VLESS or Trojan configuration depending on your needs.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h4>Connect</h4>
+        <p>Import the config to your V2Ray client and enjoy secure, private browsing.</p>
+      </div>
+    </div>
+    <div style="margin-top:32px; text-align:center;">
+      <a href="#freevpn" class="btn btn-primary" style="font-size:1rem;padding:13px 32px;">Start Now →</a>
+    </div>
+  </div>
+</section>
+
+<!-- NOTICE -->
+<section id="notice" style="background:rgba(8,15,30,.5); border-top:1px solid var(--border);">
+  <div class="section-inner">
+    <div class="section-tag">Important</div>
+    <h2>Notice from SD CLOUD</h2>
+    <p class="section-sub">Please read the following guidelines carefully before using our service.</p>
+    <div class="notice-box">
+      <h3>⚠️ SD CLOUD වෙතින් වැදගත් නිවේදනයක්!</h3>
+
+      <div class="notice-item">
+        <h4>💡 Ads සහ නොමිලේ සේවාව</h4>
+        <p>මෙම සේවාව සඳහා සර්වර්ස් මිලදී ගෙන ඔබට දිගටම නොමිලේ ලබා දෙන්නේ අපගේ වෙබ් අඩවියේ Ads වලින් ලැබෙන ආදායමෙනි. Ads ප්‍රමාණය අඩු කිරීමට ඉල්ලීමෙන් වළකින්න. කරුණාකර අපට සහාය වන්න!</p>
+      </div>
+
+      <div class="notice-item">
+        <h4>🛠️ Service Quality සහ Paid Options</h4>
+        <p>Free VPN කිහිප වතාවක්ම පරීක්ෂා කර ලබා දෙන අතර, ගැටළු ඉක්මනින් විසඳනු ලැබේ. සේවාව සෑහීමකට නොපැමිණෙන්නේ නම් Paid (Premium) සේවාව ලබා ගත හැක.</p>
+      </div>
+
+      <div class="notice-item">
+        <h4>🛡️ Fair Usage Policy</h4>
+        <p>Free VPN සඳහා සීමිත Bandwidth ඇත. Bots, Torrenting, හෝ DDoS ප්‍රහාර සඳහා භාවිත කිරීම සපුරා තහනම් වන අතර, Hardware සදහටම Ban කරනු ලැබේ.</p>
+      </div>
+
+      <div class="notice-item">
+        <h4>🔒 Privacy Guarantee</h4>
+        <p>ඔබ පිවිසෙන වෙබ් අඩවි හෝ දත්ත (Logs) කිසිසේත්ම සුරැකීම හෝ නිරීක්ෂණය කිරීම සිදු නොකරයි. Zero Logs Policy සහතිකයි.</p>
+      </div>
+
+      <div class="notice-item">
+        <h4>⚠️ Admin Support</h4>
+        <p>ගැටළු ඇත්නම් WhatsApp / Telegram Groups වල පමණක් සාකච්ඡා කරන්න. Admin Support හිමිවන්නේ Paid සේවාව සඳහා පමණි. Admins ලාගේ Inbox වෙත පැමිණිලි කිරීමෙන් වළකින්න.</p>
+      </div>
+
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+        <p style="font-size:.82rem; color:var(--muted);">📜 Full Terms & Privacy: <a href="#" style="color:var(--accent);">sdcloud.one/terms</a> | ස්තුතියි, SD CLOUD Family! ❤️</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="logo" style="margin-bottom:10px; display:inline-flex;">
+        <div class="logo-icon">SD</div>
+        SD CLOUD
+      </a>
+      <p>Enterprise-grade V2Ray tunnels. Free, fast, and secure. Zero logs, no registration required.</p>
+    </div>
+    <div class="footer-links">
+      <h5>Services</h5>
+      <ul>
+        <li><a href="#freevpn">Public FREE VPN</a></li>
+        <li><a href="#privatevpn">Private VPN</a></li>
+        <li><a href="#howtouse">How to Use</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="#">Terms & Privacy</a></li>
+        <li><a href="#">Fair Usage Policy</a></li>
+        <li><a href="#">Sign In / Register</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h5>Community</h5>
+      <ul>
+        <li><a href="#">Telegram Group</a></li>
+        <li><a href="#">WhatsApp Group</a></li>
+        <li><a href="#">Contact Support</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 SD CLOUD. All rights reserved. Zero logs. Enterprise security.</p>
+    <div class="social-links">
+      <a href="#" class="social-link">TG</a>
+      <a href="#" class="social-link">WA</a>
+      <a href="#" class="social-link">✉</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Smooth counter animation
+  function animateCounter(el, target, duration = 1800) {
+    let start = 0;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { el.textContent = target.toLocaleString(); clearInterval(timer); return; }
+      el.textContent = Math.floor(start).toLocaleString();
+    }, 16);
+  }
+
+  // Intersection observer for counters
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const el = document.getElementById('counter-users');
+        if (el) animateCounter(el, 8241);
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  const counterEl = document.getElementById('counter-users');
+  if (counterEl) observer.observe(counterEl);
+</script>
+</body>
+</html>
